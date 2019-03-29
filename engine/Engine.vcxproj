@@ -11,6 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="app\DeskBase.cpp" />
+    <ClCompile Include="app\GameAppBase.cpp" />
+    <ClCompile Include="app\PlayerBase.cpp" />
+    <ClCompile Include="app\RoomBase.cpp" />
     <ClCompile Include="network\Client.cpp" />
     <ClCompile Include="network\IOEvent.cpp" />
     <ClCompile Include="network\Log.cpp" />
@@ -19,6 +23,10 @@
     <ClCompile Include="network\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="app\DeskBase.h" />
+    <ClInclude Include="app\GameAppBase.h" />
+    <ClInclude Include="app\PlayerBase.h" />
+    <ClInclude Include="app\RoomBase.h" />
     <ClInclude Include="network\Client.h" />
     <ClInclude Include="network\IOEvent.h" />
     <ClInclude Include="network\Log.h" />
