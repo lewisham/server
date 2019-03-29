@@ -3,7 +3,7 @@
 #include "Log.h"
 #include "Network.h"
 
-using namespace walrus_server;
+using namespace wls;
 
 static TPool<Client>* mClientPool = new TPool<Client>();
 
@@ -27,7 +27,7 @@ Client* Client::Create()
 	client->m_Socket = Network::CreateSocket(false, 0);
 	if(client->m_Socket == INVALID_SOCKET)
 	{
-		ERROR_MSG("Could not create socket.");		
+		NET_ERROR_MSG("Could not create socket.");		
 		mClientPool->free(client);
 		return NULL;
 	}

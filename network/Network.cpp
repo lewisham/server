@@ -17,13 +17,13 @@ namespace
 	{
 		if(bind(socket, info->ai_addr, static_cast<int>(info->ai_addrlen)) == SOCKET_ERROR)
 		{
-			ERROR_CODE(WSAGetLastError(), "bind() failed.");
+			NET_ERROR_CODE(WSAGetLastError(), "bind() failed.");
 			return false;
 		}
 		std::string ip;
 		u_short port;
 		Network::GetLocalAddress(socket, ip, port);
-		TRACE("Bind Address : ip[%s], port[%d]", ip.c_str(), port);
+		NET_TRACE("Bind Address : ip[%s], port[%d]", ip.c_str(), port);
 
 		return true;
 	}
@@ -37,7 +37,7 @@ bool Network::Initialize()
 	WSADATA wd = {0, };
 	if(WSAStartup(WINSOCK_VERSION, &wd) != 0)
 	{
-		ERROR_MSG("WSAStartup failed.");
+		NET_ERROR_MSG("WSAStartup failed.");
 		return false;
 	}
 
@@ -68,7 +68,7 @@ SOCKET Network::CreateSocket(bool bind, u_short port)
 	// Passing NULL for pNodeName should return INADDR_ANY
 	if (getaddrinfo(NULL, portBuff.str().c_str(), &hints, &infoList) != 0) 
 	{
-		ERROR_CODE(WSAGetLastError(), "getaddrinfo() failed. port : %d", port);
+		NET_ERROR_CODE(WSAGetLastError(), "getaddrinfo() failed. port : %d", port);
 		return INVALID_SOCKET;
 	}
 
@@ -91,7 +91,7 @@ SOCKET Network::CreateSocket(bool bind, u_short port)
 		}
 		else
 		{
-			ERROR_CODE(WSAGetLastError(), "WSASocket() failed. port : %d", port);
+			NET_ERROR_CODE(WSAGetLastError(), "WSASocket() failed. port : %d", port);
 		}
 	}
 
@@ -105,7 +105,7 @@ void Network::CloseSocket(SOCKET socket)
 {
 	if(closesocket(socket) == SOCKET_ERROR)
 	{
-		ERROR_CODE(WSAGetLastError(), "closesocket() failed");
+		NET_ERROR_CODE(WSAGetLastError(), "closesocket() failed");
 	}
 }
 
@@ -118,7 +118,7 @@ BOOL Network::AcceptEx(SOCKET listenSocket, SOCKET newSocket, LPOVERLAPPED overl
 		GUID guidAcceptEx = WSAID_ACCEPTEX;
 		if (WSAIoctl(listenSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guidAcceptEx, sizeof(guidAcceptEx), &s_AcceptEx, sizeof(s_AcceptEx), &dwBytes, 0, 0) == SOCKET_ERROR)
 		{
-			ERROR_CODE(WSAGetLastError(), "WSAIoctl() to get AcceptEx() failed.");
+			NET_ERROR_CODE(WSAGetLastError(), "WSAIoctl() to get AcceptEx() failed.");
 			return FALSE;
 		}
 	}
@@ -140,7 +140,7 @@ BOOL Network::ConnectEx(SOCKET socket, sockaddr* addr, int addrlen, LPOVERLAPPED
 		GUID guidConnectEx = WSAID_CONNECTEX;
 		if (WSAIoctl(socket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guidConnectEx, sizeof(guidConnectEx), &s_ConnectEx, sizeof(s_ConnectEx), &dwBytes, 0, 0) == SOCKET_ERROR)
 		{
-			ERROR_CODE(WSAGetLastError(), "WSAIoctl() to get ConnectEx() failed");
+			NET_ERROR_CODE(WSAGetLastError(), "WSAIoctl() to get ConnectEx() failed");
 			return FALSE;
 		}
 	}

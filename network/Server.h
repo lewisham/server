@@ -5,7 +5,7 @@
 
 #include "../utils/TSingleton.h"
 
-namespace walrus_server
+namespace wls
 {
 
 	class Client;

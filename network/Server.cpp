@@ -10,7 +10,7 @@
 #include <algorithm>
 
 using namespace std;
-using namespace walrus_server;
+using namespace wls;
 
 
 //---------------------------------------------------------------------------------//
@@ -24,7 +24,7 @@ void CALLBACK Server::IoCompletionCallback(PTP_CALLBACK_INSTANCE /* Instance */,
 
 	if(IoResult != ERROR_SUCCESS)
 	{
-		ERROR_CODE(IoResult, "I/O operation failed. type[%d]", event->GetType());
+		NET_ERROR_CODE(IoResult, "I/O operation failed. type[%d]", event->GetType());
 
 		switch(event->GetType())
 		{
@@ -136,7 +136,7 @@ bool Server::Create(short port, int maxPostAccept)
 	m_ClientTPCLEAN = CreateThreadpoolCleanupGroup();
 	if (m_ClientTPCLEAN == NULL)
 	{
-		ERROR_CODE(GetLastError(), "Could not create client cleaning group.");
+		NET_ERROR_CODE(GetLastError(), "Could not create client cleaning group.");
 		return false;
 	}
 	SetThreadpoolCallbackCleanupGroup(&m_ClientTPENV, m_ClientTPCLEAN, NULL);	
@@ -152,7 +152,7 @@ bool Server::Create(short port, int maxPostAccept)
 	bool reuseAddr = true;
 	if(setsockopt(m_listenSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&reuseAddr), sizeof(reuseAddr)) == SOCKET_ERROR)
 	{
-		ERROR_CODE(WSAGetLastError(), "setsockopt() failed with SO_REUSEADDR.");
+		NET_ERROR_CODE(WSAGetLastError(), "setsockopt() failed with SO_REUSEADDR.");
 		Destroy();
 		return false;
 	}
@@ -161,7 +161,7 @@ bool Server::Create(short port, int maxPostAccept)
 	m_pTPIO = CreateThreadpoolIo(reinterpret_cast<HANDLE>(m_listenSocket), Server::IoCompletionCallback, NULL, NULL);
 	if( m_pTPIO == NULL )
 	{
-		ERROR_CODE(WSAGetLastError(), "Could not assign the listen socket to the IOCP handle.");
+		NET_ERROR_CODE(WSAGetLastError(), "Could not assign the listen socket to the IOCP handle.");
 		Destroy();
 		return false;
 	}
@@ -170,7 +170,7 @@ bool Server::Create(short port, int maxPostAccept)
 	StartThreadpoolIo( m_pTPIO );
 	if(listen(m_listenSocket, SOMAXCONN) == SOCKET_ERROR)
 	{
-		ERROR_CODE(WSAGetLastError(), "listen() failed.");
+		NET_ERROR_CODE(WSAGetLastError(), "listen() failed.");
 		return false;
 	}
 
@@ -181,7 +181,7 @@ bool Server::Create(short port, int maxPostAccept)
 	m_AcceptTPWORK = CreateThreadpoolWork(Server::WorkerPostAccept, this, NULL);
 	if(m_AcceptTPWORK == NULL)
 	{
-		ERROR_CODE(GetLastError(), "Could not create AcceptEx worker TPIO.");
+		NET_ERROR_CODE(GetLastError(), "Could not create AcceptEx worker TPIO.");
 		Destroy();
 		return false;
 	}	
@@ -268,7 +268,7 @@ void Server::PostAccept()
 				{
 					CancelThreadpoolIo( m_pTPIO );
 
-					ERROR_CODE(error, "AcceptEx() failed.");
+					NET_ERROR_CODE(error, "AcceptEx() failed.");
 					Client::Destroy(client);
 					IOEvent::Destroy(event);
 					break;
@@ -283,7 +283,7 @@ void Server::PostAccept()
 
 		InterlockedExchangeAdd(&m_NumPostAccept, i);	
 
-		TRACE("[%d] Post AcceptEx : %d", GetCurrentThreadId(), m_NumPostAccept);
+		NET_TRACE("[%d] Post AcceptEx : %d", GetCurrentThreadId(), m_NumPostAccept);
 	}
 }
 
@@ -312,7 +312,7 @@ void Server::PostRecv(Client* client)
 		{
 			CancelThreadpoolIo(client->GetTPIO());
 
-			ERROR_CODE(error, "WSARecv() failed.");
+			NET_ERROR_CODE(error, "WSARecv() failed.");
 			
 			OnClose(event);
 			IOEvent::Destroy(event);
@@ -349,7 +349,7 @@ void Server::PostSend(Client* client, Packet* packet)
 		{
 			CancelThreadpoolIo(client->GetTPIO());
 
-			ERROR_CODE(error, "WSASend() failed.");
+			NET_ERROR_CODE(error, "WSASend() failed.");
 
 			RemoveClient(client);
 		}
@@ -365,7 +365,7 @@ void Server::OnAccept(IOEvent* event)
 {
 	assert(event);
 
-	TRACE("[%d] Enter OnAccept()", GetCurrentThreadId());
+	NET_TRACE("[%d] Enter OnAccept()", GetCurrentThreadId());
 	assert(event->GetType() == IOEvent::ACCEPT);
 
 	// Check if we need to post more accept requests.
@@ -376,12 +376,12 @@ void Server::OnAccept(IOEvent* event)
 	// If adding client is fast enough, we can call it here but I assume it's slow.	
 	if(!m_ShuttingDown && TrySubmitThreadpoolCallback(Server::WorkerAddClient, event->GetClient(), &m_ClientTPENV) == false)
 	{
-		ERROR_CODE(GetLastError(), "Could not start WorkerAddClient.");
+		NET_ERROR_CODE(GetLastError(), "Could not start WorkerAddClient.");
 
 		AddClient(event->GetClient());
 	}
 
-	TRACE("[%d] Leave OnAccept()", GetCurrentThreadId());
+	NET_TRACE("[%d] Leave OnAccept()", GetCurrentThreadId());
 }
 
 
@@ -389,11 +389,11 @@ void Server::OnRecv(IOEvent* event, DWORD dwNumberOfBytesTransfered)
 {
 	assert(event);
 
-	TRACE("[%d] Enter OnRecv()", GetCurrentThreadId());
+	NET_TRACE("[%d] Enter OnRecv()", GetCurrentThreadId());
 
 	BYTE* buff = event->GetClient()->GetRecvBuff();
 	buff[dwNumberOfBytesTransfered] = '\0';
-	TRACE("[%d] OnRecv : %s", GetCurrentThreadId(), buff);
+	NET_TRACE("[%d] OnRecv : %s", GetCurrentThreadId(), buff);
 
 	// Create packet by copying recv buff.
 	Packet* packet = Packet::Create(event->GetClient(), event->GetClient()->GetRecvBuff(), dwNumberOfBytesTransfered);
@@ -402,14 +402,14 @@ void Server::OnRecv(IOEvent* event, DWORD dwNumberOfBytesTransfered)
 	// I think it's better to request receiving ASAP and handle packets received in another thread.
 	if(TrySubmitThreadpoolCallback(Server::WorkerProcessRecvPacket, packet, NULL) == false)
 	{
-		ERROR_CODE(GetLastError(), "Could not start WorkerProcessRecvPacket. call it directly.");
+		NET_ERROR_CODE(GetLastError(), "Could not start WorkerProcessRecvPacket. call it directly.");
 
 		Echo(packet);
 	}
 
 	PostRecv(event->GetClient());
 
-	TRACE("[%d] Leave OnRecv()", GetCurrentThreadId());
+	NET_TRACE("[%d] Leave OnRecv()", GetCurrentThreadId());
 }
 
 
@@ -417,7 +417,7 @@ void Server::OnSend(IOEvent* event, DWORD dwNumberOfBytesTransfered)
 {
 	assert(event);
 
-	TRACE("[%d] OnSend : %d", GetCurrentThreadId(), dwNumberOfBytesTransfered);
+	NET_TRACE("[%d] OnSend : %d", GetCurrentThreadId(), dwNumberOfBytesTransfered);
 
 	// This should be fast enough to do in this I/O thread.
 	// if not, we need to queue it like what we do in OnRecv().
@@ -429,12 +429,12 @@ void Server::OnClose(IOEvent* event)
 {
 	assert(event);
 
-	TRACE("Client's socket has been closed.");
+	NET_TRACE("Client's socket has been closed.");
 
 	// If whatever game logics about this event are fast enough, we can manage them here but I assume they are slow.	
 	if(!m_ShuttingDown && TrySubmitThreadpoolCallback(Server::WorkerRemoveClient, event->GetClient(), &m_ClientTPENV) == false)
 	{
-		ERROR_CODE(GetLastError(), "can't start WorkerRemoveClient. call it directly.");
+		NET_ERROR_CODE(GetLastError(), "can't start WorkerRemoveClient. call it directly.");
 
 		RemoveClient(event->GetClient());
 	}
@@ -448,7 +448,7 @@ void Server::AddClient(Client* client)
 	// The socket sAcceptSocket does not inherit the properties of the socket associated with sListenSocket parameter until SO_UPDATE_ACCEPT_CONTEXT is set on the socket.
 	if (setsockopt(client->GetSocket(), SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, reinterpret_cast<const char *>(&m_listenSocket), sizeof(m_listenSocket)) == SOCKET_ERROR)
 	{
-		ERROR_CODE(WSAGetLastError(), "setsockopt() for AcceptEx() failed.");
+		NET_ERROR_CODE(WSAGetLastError(), "setsockopt() for AcceptEx() failed.");
 
 		RemoveClient(client);
 	}		
@@ -460,7 +460,7 @@ void Server::AddClient(Client* client)
 		TP_IO* pTPIO = CreateThreadpoolIo(reinterpret_cast<HANDLE>(client->GetSocket()), Server::IoCompletionCallback, NULL, NULL);
 		if(pTPIO == NULL)
 		{
-			ERROR_CODE(GetLastError(), "CreateThreadpoolIo failed for a client.");
+			NET_ERROR_CODE(GetLastError(), "CreateThreadpoolIo failed for a client.");
 
 			RemoveClient(client);
 		}
@@ -469,7 +469,7 @@ void Server::AddClient(Client* client)
 			std::string ip;
 			u_short port = 0;
 			Network::GetRemoteAddress(client->GetSocket(), ip, port);
-			TRACE("[%d] Accept succeeded. client address : ip[%s], port[%d]", GetCurrentThreadId(), ip.c_str(), port);
+			NET_TRACE("[%d] Accept succeeded. client address : ip[%s], port[%d]", GetCurrentThreadId(), ip.c_str(), port);
 
 			client->SetTPIO(pTPIO);
 
@@ -493,7 +493,7 @@ void Server::RemoveClient(Client* client)
 
 	if(itor != m_Clients.end())
 	{
-		TRACE("[%d] RemoveClient succeeded.", GetCurrentThreadId());
+		NET_TRACE("[%d] RemoveClient succeeded.", GetCurrentThreadId());
 
 		Client::Destroy(client);
 

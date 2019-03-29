@@ -2,7 +2,7 @@
 
 #include <winsock2.h>
 
-namespace walrus_server
+namespace wls
 {
 
 	class Client

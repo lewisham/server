@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-namespace walrus_server
+namespace wls
 {
 
 	class Client;

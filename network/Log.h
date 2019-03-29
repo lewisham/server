@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Log
+namespace wls
 {
 	void Trace(const char * msg, ...);
 
@@ -13,6 +13,6 @@ namespace Log
 	void EnableTrace(bool enable);
 }
 
-#define TRACE(msg, ...) Log::Trace(msg, __VA_ARGS__);
-#define ERROR_MSG(msg, ...) Log::Error(__FILE__, __FUNCTION__, __LINE__, msg, __VA_ARGS__);
-#define ERROR_CODE(code, msg, ...) Log::Error(__FILE__, __FUNCTION__, __LINE__, code, msg, __VA_ARGS__);
+#define NET_TRACE(msg, ...) wls::Trace(msg, __VA_ARGS__);
+#define NET_ERROR_MSG(msg, ...) wls::Error(__FILE__, __FUNCTION__, __LINE__, msg, __VA_ARGS__);
+#define NET_ERROR_CODE(code, msg, ...) wls::Error(__FILE__, __FUNCTION__, __LINE__, code, msg, __VA_ARGS__);

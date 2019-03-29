@@ -6,7 +6,7 @@
 #include <iomanip>
 using namespace std;
 
-namespace Log
+namespace wls
 {
 	const int BUFFER_SIZE = 256;
 
@@ -96,7 +96,7 @@ namespace Log
 
 		if(false == FreeLibrary(libModule))
 		{
-			ERROR_CODE(GetLastError(), "Log::CleanUp() - FreeLibrary() failed.");
+			NET_ERROR_CODE(GetLastError(), "Log::CleanUp() - FreeLibrary() failed.");
 		}
 
 		DeleteCriticalSection(&logCS);

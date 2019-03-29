@@ -1,7 +1,7 @@
 #include "Packet.h"
 #include "TPool.h"
 
-using namespace walrus_server;
+using namespace wls;
 
 static TPool<Packet> PacketPool;
 
