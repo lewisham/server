@@ -20,7 +20,6 @@ namespace
 			ERROR_CODE(WSAGetLastError(), "bind() failed.");
 			return false;
 		}
-
 		std::string ip;
 		u_short port;
 		Network::GetLocalAddress(socket, ip, port);
@@ -57,7 +56,7 @@ SOCKET Network::CreateSocket(bool bind, u_short port)
 	// Get Address Info
 	addrinfo hints;
 	ZeroMemory(&hints, sizeof(addrinfo));
-	hints.ai_family = AF_UNSPEC;
+	hints.ai_family = AF_INET; // AF_INET AF_UNSPEC
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
 	hints.ai_flags = bind ? AI_PASSIVE : 0;

@@ -3,16 +3,18 @@
 #include <iostream>
 using namespace std;
 
-#include "utils/Log.h"
-#include "utils/Network.h"
-#include "Server.h"
+#include "network/Log.h"
+#include "network/Network.h"
+#include "network/Server.h"
+
+using namespace walrus_server;
 
 void main(int argc, char* argv[])
 {
 	Log::Setup();
 	bool bDebug = true;
-	u_short port = 6835;
-	int maxPostAccept = 100;
+	u_short port = 17000;
+	int maxPostAccept = 2;
 	if (!bDebug)
 	{
 		if (argc != 3)

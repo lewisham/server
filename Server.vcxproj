@@ -171,22 +171,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Client.cpp" />
-    <ClCompile Include="IOEvent.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Packet.cpp" />
-    <ClCompile Include="Server.cpp" />
-    <ClCompile Include="utils\Log.cpp" />
-    <ClCompile Include="utils\Network.cpp" />
+    <ClCompile Include="network\Client.cpp" />
+    <ClCompile Include="network\IOEvent.cpp" />
+    <ClCompile Include="network\Log.cpp" />
+    <ClCompile Include="network\Network.cpp" />
+    <ClCompile Include="network\Packet.cpp" />
+    <ClCompile Include="network\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Client.h" />
-    <ClInclude Include="IOEvent.h" />
-    <ClInclude Include="Packet.h" />
-    <ClInclude Include="Server.h" />
-    <ClInclude Include="utils\Log.h" />
-    <ClInclude Include="utils\Network.h" />
-    <ClInclude Include="utils\TPool.h" />
+    <ClInclude Include="network\Client.h" />
+    <ClInclude Include="network\IOEvent.h" />
+    <ClInclude Include="network\Log.h" />
+    <ClInclude Include="network\Network.h" />
+    <ClInclude Include="network\Packet.h" />
+    <ClInclude Include="network\Server.h" />
+    <ClInclude Include="network\TPool.h" />
     <ClInclude Include="utils\TSingleton.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

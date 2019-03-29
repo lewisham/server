@@ -1,7 +1,9 @@
 #include "Client.h"
-#include "utils/TPool.h"
-#include "utils/Log.h"
-#include "utils/Network.h"
+#include "TPool.h"
+#include "Log.h"
+#include "Network.h"
+
+using namespace walrus_server;
 
 static TPool<Client>* mClientPool = new TPool<Client>();
 

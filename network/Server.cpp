@@ -3,13 +3,14 @@
 #include "Packet.h"
 #include "IOEvent.h"
 
-#include "utils/Log.h"
-#include "utils/Network.h"
+#include "Log.h"
+#include "Network.h"
 #include <iostream>
 #include <cassert>
 #include <algorithm>
 
 using namespace std;
+using namespace walrus_server;
 
 
 //---------------------------------------------------------------------------------//
