@@ -41,6 +41,7 @@ namespace wls
 	public:
 		IOEvent();
 		~IOEvent();
+		int mLockCnt;
 
 	private:
 		OVERLAPPED m_Overlapped;

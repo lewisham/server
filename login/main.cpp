@@ -1,12 +1,11 @@
 
 #include <string>
 #include <iostream>
+#include "../engine/wls.h"
+
+#pragma comment(lib, "../libs/Engine.lib ")
+
 using namespace std;
-
-#include "network/Log.h"
-#include "network/Network.h"
-#include "network/Server.h"
-
 using namespace wls;
 
 void main(int argc, char* argv[])

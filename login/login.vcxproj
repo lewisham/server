@@ -18,8 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>Server - NewThreadPool</ProjectName>
+    <ProjectName>Login</ProjectName>
     <ProjectGuid>{9F68071D-1DDB-46E5-AD9A-D6D19C698688}</ProjectGuid>
     <RootNamespace>Server</RootNamespace>
     <Keyword>Win32Proj</Keyword>
@@ -109,7 +112,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\young\Documents\Projects\Lib\boost_1_46_1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;__WIN32__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader />
@@ -170,25 +173,6 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="network\Client.cpp" />
-    <ClCompile Include="network\IOEvent.cpp" />
-    <ClCompile Include="network\Log.cpp" />
-    <ClCompile Include="network\Network.cpp" />
-    <ClCompile Include="network\Packet.cpp" />
-    <ClCompile Include="network\Server.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="network\Client.h" />
-    <ClInclude Include="network\IOEvent.h" />
-    <ClInclude Include="network\Log.h" />
-    <ClInclude Include="network\Network.h" />
-    <ClInclude Include="network\Packet.h" />
-    <ClInclude Include="network\Server.h" />
-    <ClInclude Include="network\TPool.h" />
-    <ClInclude Include="utils\TSingleton.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

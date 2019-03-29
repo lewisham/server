@@ -33,6 +33,7 @@ namespace wls
 	public:
 		Packet();
 		~Packet();
+		int mLockCnt;
 
 	private:
 		Client* m_Sender;

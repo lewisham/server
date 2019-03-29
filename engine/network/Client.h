@@ -55,6 +55,7 @@ namespace wls
 	public:
 		Client(void);
 		~Client(void);
+		int mLockCnt;
 
 	private:
 		TP_IO* m_pTPIO;
