@@ -1,7 +1,8 @@
 
 #include <string>
 #include <iostream>
-#include "../engine/wls.h"
+#include "../engine/network/net.h"
+#include "GameApp.h"
 
 #pragma comment(lib, "../libs/Engine.lib ")
 
@@ -11,44 +12,8 @@ using namespace wls;
 void main(int argc, char* argv[])
 {
 	wls::Setup();
-	bool bDebug = true;
-	u_short port = 6835;
-	int maxPostAccept = 2;
-	if (!bDebug)
-	{
-		if (argc != 3)
-		{
-			NET_TRACE("Please add port and max number of accept posts.");
-			NET_TRACE("(ex) 17000 100");
-			return;
-		}
-		port = static_cast<u_short>(atoi(argv[1]));
-		maxPostAccept = atoi(argv[2]);
-	}
-
-	
-
-	NET_TRACE("Input : port : %d, max accept : %d", port, maxPostAccept);
-
-	if(Network::Initialize() == false)
-	{
-		NET_ERROR_MSG("Network::Initialize() failed");
-		return;
-	}
-
-	Server::New();
-	
-	if(Server::Instance()->Create(port, maxPostAccept) == false)
-	{
-		NET_ERROR_MSG("Server::Create() failed");
-		Network::Deinitialize();
-		return;
-	}
-
-#ifndef _DEBUG
-	Log::EnableTrace(false);
-#endif
-
+	GameApp app;
+	app.Run();
 	string input;
 	bool loop = true;
 	while(loop)
@@ -72,12 +37,6 @@ void main(int argc, char* argv[])
 			wls::EnableTrace(false);
 		}
 	}
-
-	Server::Delete();
-
-	Network::Deinitialize();
-
-	wls::Cleanup();
-
+	app.Stop();
 	return;
 }

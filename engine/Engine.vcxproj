@@ -28,6 +28,7 @@
     <ClInclude Include="app\PlayerBase.h" />
     <ClInclude Include="app\RoomBase.h" />
     <ClInclude Include="network\Client.h" />
+    <ClInclude Include="network\net.h" />
     <ClInclude Include="network\IOEvent.h" />
     <ClInclude Include="network\Log.h" />
     <ClInclude Include="network\Network.h" />

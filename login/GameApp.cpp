@@ -11,5 +11,11 @@ GameApp::~GameApp()
 
 }
 
+void GameApp::Run()
+{
+	this->StartServer(6835);
+}
+
+
 
 

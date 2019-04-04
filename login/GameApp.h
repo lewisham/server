@@ -1,10 +1,14 @@
 #pragma once
 #include <Windows.h>
 
+#include "../engine/app/GameAppBase.h"
 
-class GameApp
+class GameApp: public wls::GameAppBase
 {
 public:
 	GameApp();
 	~GameApp();
+
+public:
+	virtual void Run();
 };
